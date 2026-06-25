@@ -95,7 +95,7 @@ def load_wc_teams() -> list[str]:
  wc_form_v2, wc_avg_qa_gpg, wc_avg_qa_cpg,
  fifa_data) = load_pipeline()
 
-WC_TEAMS = [t for t in load_wc_teams() if t in final_ratings]
+WC_TEAMS = load_wc_teams()
 
 
 # ── prediction helper ─────────────────────────────────────────────────────────
@@ -111,8 +111,8 @@ def predict(
     p = cfg["priors"]
     k = cfg["hyperparams"]["h2h_k"]
 
-    r_h = final_ratings[home_team]
-    r_a = final_ratings[away_team]
+    r_h = final_ratings.get(home_team, 1500.0)
+    r_a = final_ratings.get(away_team, 1500.0)
 
     # Normalize knockout neutral matches to higher-Elo team as "home"
     # for deterministic H2H lookup, then unswap probabilities before returning
