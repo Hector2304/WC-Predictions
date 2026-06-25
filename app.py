@@ -30,10 +30,34 @@ from src.features.fifa_stats import load_latest_fifa_data
 
 FIFA_DATA_DIR = "DATOS FIFA"
 
+FLAGS: dict[str, str] = {
+    "Algeria": "🇩🇿", "Argentina": "🇦🇷", "Australia": "🇦🇺",
+    "Austria": "🇦🇹", "Belgium": "🇧🇪", "Bosnia and Herzegovina": "🇧🇦",
+    "Brazil": "🇧🇷", "Canada": "🇨🇦", "Cape Verde": "🇨🇻",
+    "Colombia": "🇨🇴", "Croatia": "🇭🇷", "Curacao": "🇨🇼",
+    "Czechia": "🇨🇿", "DR Congo": "🇨🇩", "Ecuador": "🇪🇨",
+    "Egypt": "🇪🇬", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "France": "🇫🇷",
+    "Germany": "🇩🇪", "Ghana": "🇬🇭", "Haiti": "🇭🇹",
+    "Iran": "🇮🇷", "Iraq": "🇮🇶", "Ivory Coast": "🇨🇮",
+    "Japan": "🇯🇵", "Jordan": "🇯🇴", "Mexico": "🇲🇽",
+    "Morocco": "🇲🇦", "Netherlands": "🇳🇱", "New Zealand": "🇳🇿",
+    "Norway": "🇳🇴", "Panama": "🇵🇦", "Paraguay": "🇵🇾",
+    "Portugal": "🇵🇹", "Qatar": "🇶🇦", "Saudi Arabia": "🇸🇦",
+    "Scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Senegal": "🇸🇳", "South Africa": "🇿🇦",
+    "South Korea": "🇰🇷", "Spain": "🇪🇸", "Sweden": "🇸🇪",
+    "Switzerland": "🇨🇭", "Tunisia": "🇹🇳", "Turkey": "🇹🇷",
+    "United States": "🇺🇸", "Uruguay": "🇺🇾", "Uzbekistan": "🇺🇿",
+}
+
+
+def flag(team: str) -> str:
+    return FLAGS.get(team, "🏳️")
+
+
 # ── page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="WC 2026 Predictor",
-    page_icon="Soccer Ball",
+    page_icon="⚽",
     layout="centered",
 )
 
@@ -60,10 +84,18 @@ def load_pipeline():
     return model, cfg, df, final_ratings, team_list, wc_form, wc_avg_gpg, wc_form_v2, wc_avg_qa_gpg, wc_avg_qa_cpg, fifa_data
 
 
+@st.cache_data
+def load_wc_teams() -> list[str]:
+    df = pd.read_csv("international_results-master/mundial2026.csv")
+    return sorted(set(df["home_team"]) | set(df["away_team"]))
+
+
 (model, cfg, df_full, final_ratings, team_list,
  wc_form, wc_avg_gpg,
  wc_form_v2, wc_avg_qa_gpg, wc_avg_qa_cpg,
  fifa_data) = load_pipeline()
+
+WC_TEAMS = [t for t in load_wc_teams() if t in final_ratings]
 
 
 # ── prediction helper ─────────────────────────────────────────────────────────
@@ -129,6 +161,7 @@ def predict(
 
     # ── form adjustment ───────────────────────────────────────────────────────
     form_info = None
+    form_info_v2 = None
     if with_form:
         lam_h_adj, lam_a_adj = form_adjusted_lambdas(
             float(lam_h_arr[0]), float(lam_a_arr[0]),
@@ -336,13 +369,85 @@ def predict(
         "theta_D": theta_D,
         "top_scores": top,
         "form": form_info,
-        "form_v2": form_info_v2 if with_form else None,
+        "form_v2": form_info_v2,
         "form_v3": form_info_v3 if with_form else None,
     }
 
 
+# ── UI helpers ────────────────────────────────────────────────────────────────
+
+def _prob_bars(home: str, away: str, p_h: float, p_d: float, p_a: float) -> None:
+    rows = [
+        (f"{flag(home)} {home}", p_h, "#2ecc71"),
+        ("🤝 Draw",              p_d, "#f0a500"),
+        (f"{flag(away)} {away}", p_a, "#e74c3c"),
+    ]
+    html = "<div style='margin:6px 0 16px 0'>"
+    for label, prob, color in rows:
+        pct = prob * 100
+        html += (
+            f"<div style='margin-bottom:10px'>"
+            f"<div style='display:flex;justify-content:space-between;margin-bottom:3px'>"
+            f"<span style='font-size:0.9em'>{label}</span>"
+            f"<span style='font-size:0.9em;font-weight:700'>{prob:.1%}</span>"
+            f"</div>"
+            f"<div style='background:#e8e8e8;border-radius:6px;height:13px;overflow:hidden'>"
+            f"<div style='background:{color};border-radius:6px;height:13px;width:{pct:.1f}%'></div>"
+            f"</div></div>"
+        )
+    html += "</div>"
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def _outcome_card(prediction: str, home_team: str, away_team: str,
+                  p_h: float, p_d: float, p_a: float, theta_D: float) -> None:
+    if prediction == "Draw":
+        st.markdown(
+            f"<div style='background:#fff8e1;border-left:5px solid #f0a500;"
+            f"padding:14px 18px;border-radius:6px;margin:4px 0'>"
+            f"<span style='font-size:1.3em'>🤝 <strong>Draw</strong></span><br>"
+            f"<span style='color:#666;font-size:0.9em'>"
+            f"P(Draw) = {p_d:.1%} — above threshold {theta_D:.2f}</span></div>",
+            unsafe_allow_html=True,
+        )
+    else:
+        winner_prob = p_h if prediction == home_team else p_a
+        st.markdown(
+            f"<div style='background:#e8f5e9;border-left:5px solid #2ecc71;"
+            f"padding:14px 18px;border-radius:6px;margin:4px 0'>"
+            f"<span style='font-size:1.3em'>{flag(prediction)} "
+            f"<strong>{prediction} wins</strong></span><br>"
+            f"<span style='color:#666;font-size:0.9em'>"
+            f"{winner_prob:.1%} win probability</span></div>",
+            unsafe_allow_html=True,
+        )
+
+
+def _scoreline_display(home: str, away: str, score_h: int, score_a: int,
+                       heading_level: str = "h2") -> None:
+    c1, c2, c3 = st.columns([3, 2, 3])
+    with c1:
+        st.markdown(
+            f"<{heading_level} style='text-align:right;margin:0'>"
+            f"{flag(home)} {home}</{heading_level}>",
+            unsafe_allow_html=True,
+        )
+    with c2:
+        st.markdown(
+            f"<{heading_level} style='text-align:center;margin:0'>"
+            f"{score_h} – {score_a}</{heading_level}>",
+            unsafe_allow_html=True,
+        )
+    with c3:
+        st.markdown(
+            f"<{heading_level} style='text-align:left;margin:0'>"
+            f"{away} {flag(away)}</{heading_level}>",
+            unsafe_allow_html=True,
+        )
+
+
 # ── UI ────────────────────────────────────────────────────────────────────────
-st.title("WC 2026 Predictor")
+st.title("⚽ WC 2026 Predictor")
 st.caption(
     "Model v5 · Elo + H2H + WC phase features · "
     "Ratings updated through current group stage"
@@ -353,16 +458,18 @@ st.divider()
 col1, col2 = st.columns(2)
 with col1:
     home_team = st.selectbox(
-        "Home team",
-        options=team_list,
-        index=team_list.index("Argentina") if "Argentina" in team_list else 0,
+        "Team 1",
+        options=WC_TEAMS,
+        format_func=lambda t: f"{FLAGS.get(t, '🏳️')} {t}",
+        index=WC_TEAMS.index("Argentina") if "Argentina" in WC_TEAMS else 0,
         key="home",
     )
 with col2:
     away_team = st.selectbox(
-        "Away team",
-        options=team_list,
-        index=team_list.index("France") if "France" in team_list else 1,
+        "Team 2",
+        options=WC_TEAMS,
+        format_func=lambda t: f"{FLAGS.get(t, '🏳️')} {t}",
+        index=WC_TEAMS.index("France") if "France" in WC_TEAMS else 1,
         key="away",
     )
 
@@ -398,32 +505,17 @@ if predict_btn:
         st.divider()
 
         phase_label = "Knockout" if knockout else "Group stage"
-        st.caption(f"Phase: {phase_label} · theta_D = {r['theta_D']:.2f}")
+        st.caption(f"Phase: {phase_label} · Elo: {flag(home_team)} {home_team} {r['elo_h']} vs {flag(away_team)} {away_team} {r['elo_a']} (diff {r['elo_diff']:+}) · θ_D = {r['theta_D']:.2f}")
 
         # ── BLOCK 1: Predicted outcome ────────────────────────────────────────
         st.subheader("Predicted outcome")
-        if r["prediction"] == "Draw":
-            st.info(f"**Draw**  —  P(Draw) = {r['p_d']:.1%} exceeds threshold {r['theta_D']:.2f}")
-        elif r["prediction"] == home_team:
-            st.success(f"**{home_team} wins**  —  {r['p_h']:.1%} win probability")
-        else:
-            st.success(f"**{away_team} wins**  —  {r['p_a']:.1%} win probability")
+        _outcome_card(
+            r["prediction"], home_team, away_team,
+            r["p_h"], r["p_d"], r["p_a"], r["theta_D"],
+        )
 
         st.subheader("Win probabilities")
-        pc1, pc2, pc3 = st.columns(3)
-        with pc1:
-            st.metric(home_team, f"{r['p_h']:.1%}")
-        with pc2:
-            st.metric("Draw", f"{r['p_d']:.1%}")
-        with pc3:
-            st.metric(away_team, f"{r['p_a']:.1%}")
-
-        st.bar_chart(
-            pd.DataFrame(
-                {"probability": [r["p_h"], r["p_d"], r["p_a"]]},
-                index=[home_team, "Draw", away_team],
-            )
-        )
+        _prob_bars(home_team, away_team, r["p_h"], r["p_d"], r["p_a"])
 
         # ── BLOCK 2: Most probable scoreline ─────────────────────────────────
         st.divider()
@@ -447,45 +539,26 @@ if predict_btn:
                 f"draw probability ({r['p_d']:.1%}) exceeds the threshold ({r['theta_D']:.2f}), "
                 f"so the model predicts a draw."
             )
-        else:
-            st.caption("The most likely scoreline is consistent with the predicted outcome.")
 
-        sc1, sc2, sc3 = st.columns([2, 1, 2])
-        with sc1:
-            st.markdown(
-                f"<h2 style='text-align:right'>{home_team}</h2>",
-                unsafe_allow_html=True,
-            )
-        with sc2:
-            st.markdown(
-                f"<h2 style='text-align:center'>{r['score_h']} – {r['score_a']}</h2>",
-                unsafe_allow_html=True,
-            )
-        with sc3:
-            st.markdown(
-                f"<h2 style='text-align:left'>{away_team}</h2>",
-                unsafe_allow_html=True,
-            )
+        _scoreline_display(home_team, away_team, r["score_h"], r["score_a"])
 
         # ── BLOCK 3: Scoreline distribution ──────────────────────────────────
         st.divider()
         st.subheader("Scoreline distribution")
         st.caption(
-            "These are the most probable individual scorelines according to the Poisson model — "
-            "not calibrated predictions. The top score rarely exceeds 10% probability. "
-            "The outcome prediction above is what the model is calibrated for."
+            "Most probable individual scorelines — not calibrated predictions. "
+            "The outcome above is what the model is calibrated for."
         )
 
         top = r["top_scores"]
         cols = st.columns(4)
         for idx, (prob, gh, ga) in enumerate(top[:8]):
-            col = cols[idx % 4]
             outcome = (
                 home_team.split()[0] if gh > ga else
                 away_team.split()[0] if ga > gh else
                 "Draw"
             )
-            col.metric(
+            cols[idx % 4].metric(
                 label=f"{gh} – {ga}",
                 value=f"{prob:.1%}",
                 delta=outcome,
@@ -547,14 +620,14 @@ if predict_btn:
                 with col:
                     g = s1.get("games", 0)
                     if g == 0:
-                        st.info(f"**{team}**  \nNo WC 2026 data — no form adjustment")
+                        st.info(f"{flag(team)} **{team}**  \nNo WC 2026 data yet")
                         return
                     qa_atk = s2["qa_gpg"] / avg_qa_gpg if avg_qa_gpg > 0 else 1.0
                     qa_def = s2["qa_cpg"] / avg_qa_cpg if avg_qa_cpg > 0 else 1.0
                     atk_label = "strong" if qa_atk > 1.10 else ("poor" if qa_atk < 0.90 else "avg")
                     def_label = "solid" if qa_def < 0.90 else ("leaky" if qa_def > 1.10 else "avg")
                     body = (
-                        f"**{team}**  \n"
+                        f"{flag(team)} **{team}**  \n"
                         f"GP {g} &nbsp;·&nbsp; GF {s1['scored']} &nbsp;·&nbsp; "
                         f"GA {s1['conceded']} &nbsp;·&nbsp; GD {s1['gd']:+}  \n"
                         f"Attack: {s2['qa_gpg']:.2f} qa-gpg &nbsp;({qa_atk:.2f}x avg · *{atk_label}*)  \n"
@@ -566,8 +639,8 @@ if predict_btn:
                         atk_fl = "↑" if atk_f > 1.05 else ("↓" if atk_f < 0.95 else "=")
                         def_fl = "↑" if def_f > 1.05 else ("↓" if def_f < 0.95 else "=")
                         body += (
-                            f"  \nFIFA · Ataque {atk_f:.2f}x {atk_fl} "
-                            f"&nbsp;·&nbsp; Defensa {def_f:.2f}x {def_fl}"
+                            f"  \nFIFA · Attack {atk_f:.2f}x {atk_fl} "
+                            f"&nbsp;·&nbsp; Defense {def_f:.2f}x {def_fl}"
                         )
                     st.markdown(body, unsafe_allow_html=True)
 
@@ -584,24 +657,19 @@ if predict_btn:
             pred_changed = f2["prediction"] != r["prediction"]
             change_note  = f"  *(changed from v5: {r['prediction']})*" if pred_changed else ""
 
-            if f2["prediction"] == "Draw":
-                st.warning(
-                    f"**Draw** — P(Draw) = {f2['p_d']:.1%} exceeds "
-                    f"threshold {r['theta_D']:.2f}{change_note}"
-                )
+            _outcome_card(
+                f2["prediction"], home_team, away_team,
+                f2["p_h"], f2["p_d"], f2["p_a"], r["theta_D"],
+            )
+            if change_note:
+                st.caption(f"Prediction changed vs v5: was **{r['prediction']}**")
             else:
-                winner_prob = f2["p_h"] if f2["prediction"] == home_team else f2["p_a"]
-                st.warning(
-                    f"**{f2['prediction']} wins** — {winner_prob:.1%} win probability{change_note}"
-                )
-
-            if not pred_changed:
                 st.caption(f"Same prediction as v5 — form signal confirms {r['prediction']}")
 
             # ── Probability comparison ─────────────────────────────────────────
             st.markdown("**Win probabilities — v5 vs form-adjusted**")
             mc1, mc2, mc3 = st.columns(3)
-            for col, label, v5v, fv in zip(
+            for col, lbl, v5v, fv in zip(
                 [mc1, mc2, mc3],
                 [home_team, "Draw", away_team],
                 [r["p_h"], r["p_d"], r["p_a"]],
@@ -609,41 +677,20 @@ if predict_btn:
             ):
                 with col:
                     st.metric(
-                        label=label,
+                        label=f"{flag(lbl)} {lbl}" if lbl != "Draw" else "🤝 Draw",
                         value=f"{fv:.1%}",
                         delta=f"{fv - v5v:+.1%} vs v5",
                         help=f"v5: {v5v:.1%}  →  form-adjusted: {fv:.1%}",
                     )
 
-            st.bar_chart(
-                pd.DataFrame(
-                    {
-                        "v5": [r["p_h"], r["p_d"], r["p_a"]],
-                        "form-adjusted": [f2["p_h"], f2["p_d"], f2["p_a"]],
-                    },
-                    index=[home_team, "Draw", away_team],
-                )
-            )
+            st.markdown("v5 base")
+            _prob_bars(home_team, away_team, r["p_h"], r["p_d"], r["p_a"])
+            st.markdown("Form-adjusted")
+            _prob_bars(home_team, away_team, f2["p_h"], f2["p_d"], f2["p_a"])
 
             # ── Most probable scoreline ────────────────────────────────────────
             st.markdown("**Most probable scoreline — form adjusted**")
-            fsc1, fsc2, fsc3 = st.columns([2, 1, 2])
-            with fsc1:
-                st.markdown(
-                    f"<h3 style='text-align:right'>{home_team}</h3>",
-                    unsafe_allow_html=True,
-                )
-            with fsc2:
-                st.markdown(
-                    f"<h3 style='text-align:center'>"
-                    f"{f2['score_h']} – {f2['score_a']}</h3>",
-                    unsafe_allow_html=True,
-                )
-            with fsc3:
-                st.markdown(
-                    f"<h3 style='text-align:left'>{away_team}</h3>",
-                    unsafe_allow_html=True,
-                )
+            _scoreline_display(home_team, away_team, f2["score_h"], f2["score_a"], "h3")
 
             # ── Scoreline distribution ─────────────────────────────────────────
             st.markdown("**Scoreline distribution — form adjusted**")
@@ -661,12 +708,12 @@ if predict_btn:
                     delta_color="off",
                 )
 
-        # Details
+        # ── Details ───────────────────────────────────────────────────────────
         with st.expander("Details"):
             st.write(
-                f"**Elo:** {home_team} {r['elo_h']} · "
-                f"{away_team} {r['elo_a']} (diff {r['elo_diff']:+})"
+                f"**Elo:** {flag(home_team)} {home_team} {r['elo_h']} · "
+                f"{flag(away_team)} {away_team} {r['elo_a']} (diff {r['elo_diff']:+})"
             )
             st.write(f"**Head-to-head:** {r['h2h_n']} previous matches in this direction")
             fav = home_team if r["p_h"] > r["p_a"] else away_team if r["p_a"] > r["p_h"] else "Even"
-            st.write(f"**Elo favourite:** {fav}")
+            st.write(f"**Elo favourite:** {flag(fav)} {fav}" if fav != "Even" else "**Elo favourite:** Even")
