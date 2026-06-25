@@ -379,7 +379,7 @@ def predict(
 def _prob_bars(home: str, away: str, p_h: float, p_d: float, p_a: float) -> None:
     rows = [
         (f"{flag(home)} {home}", p_h, "#2ecc71"),
-        ("🤝 Draw",              p_d, "#f0a500"),
+        (" Draw",              p_d, "#f0a500"),
         (f"{flag(away)} {away}", p_a, "#e74c3c"),
     ]
     html = "<div style='margin:6px 0 16px 0'>"
@@ -405,7 +405,7 @@ def _outcome_card(prediction: str, home_team: str, away_team: str,
         st.markdown(
             f"<div style='background:#fff8e1;border-left:5px solid #f0a500;"
             f"padding:14px 18px;border-radius:6px;margin:4px 0'>"
-            f"<span style='font-size:1.3em'>🤝 <strong>Draw</strong></span><br>"
+            f"<span style='font-size:1.3em'> <strong>Draw</strong></span><br>"
             f"<span style='color:#666;font-size:0.9em'>"
             f"P(Draw) = {p_d:.1%} — above threshold {theta_D:.2f}</span></div>",
             unsafe_allow_html=True,
@@ -677,7 +677,7 @@ if predict_btn:
             ):
                 with col:
                     st.metric(
-                        label=f"{flag(lbl)} {lbl}" if lbl != "Draw" else "🤝 Draw",
+                        label=f"{flag(lbl)} {lbl}" if lbl != "Draw" else " Draw",
                         value=f"{fv:.1%}",
                         delta=f"{fv - v5v:+.1%} vs v5",
                         help=f"v5: {v5v:.1%}  →  form-adjusted: {fv:.1%}",
