@@ -1,0 +1,100 @@
+Argentina 1901.93
+Francia 1894.40
+España 1864.32
+Inglaterra 1829.82
+Brasil 1772.01
+Marruecos 1769.98
+Portugal 1766.74
+Países Bajos 1764.40
+Alemania 1760.46
+Bélgica 1727.88
+Colombia 1727.42
+México 1721.78
+Croacia 1711.48
+EE. UU. 1709.59
+Italia 1704.73
+Japón 1681.26
+Suiza 1654.94
+Uruguay 1649.96
+Senegal 1638.36
+Dinamarca 1619.47
+RI de Irán 1611.18
+Noruega 1606.48
+Austria 1599.99
+República de Corea 1591.75
+Nigeria 1585.02
+Australia 1584.55
+Egipto 1583.37
+Argelia 1575.64
+Canadá 1572.13
+Ecuador 1558.35
+Costa de Marfil 1551.71
+Turquía 1550.13
+Ucrania 1549.29
+Rusia 1529.60
+Polonia 1526.18
+Suecia 1517.99
+Paraguay 1517.39
+Gales 1516.95
+Hungría 1506.39
+Escocia 1504.41
+Serbia 1502.13
+Panamá 1489.05
+Chequia 1481.49
+Camerún 1481.24
+Eslovaquia 1473.66
+Grecia 1473.19
+RD Congo 1472.37
+Venezuela 1469.18
+Chile 1458.20
+Perú 1457.69
+Costa Rica 1456.03
+Rumanía 1455.89
+Mali 1455.59
+República de Irlanda 1441.10
+Eslovenia 1441.09
+Catar 1438.82
+Túnez 1437.69
+Uzbekistán 1432.84
+Arabia Saudí 1426.71
+Irak 1419.24
+Sudáfrica 1418.21
+Burkina Faso 1406.99
+Islas de Cabo Verde 1401.77
+Ghana 1398.57
+Bosnia y Herzegovina 1381.18
+Honduras 1378.97
+Albania 1376.03
+Emiratos Árabes Unidos 1370.47
+Macedonia del Norte 1369.16
+Irlanda del Norte 1365.30
+Jamaica 1357.84
+Jordania 1355.89
+Georgia 1355.26
+Islandia 1342.77
+Finlandia 1341.92
+Israel 1333.90
+Bolivia 1326.00
+Kosovo 1319.12
+Omán 1306.90
+Montenegro 1301.98
+Curazao 1299.41
+Guinea 1295.60
+Siria 1283.05
+Nueva Zelanda 1277.34
+Gabón 1272.51
+Bulgaria 1271.68
+Haití 1271.00
+Angola 1265.58
+Uganda 1264.09
+Zambia 1255.82
+RP China 1254.81
+Baréin 1254.41
+Benín 1252.17
+Tailandia 1250.80
+Palestina 1243.71
+Bielorrusia 1242.88
+Guatemala 1238.74
+Luxemburgo 1232.82
+Vietnam 1225.68
+El Salvador 1225.34

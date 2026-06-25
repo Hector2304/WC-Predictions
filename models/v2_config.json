@@ -1,0 +1,28 @@
+{
+  "version": "v2",
+  "train_cutoff": "2023-01-01",
+  "features": {
+    "home": [
+      "elo_diff_scaled",
+      "neutral",
+      "h2h_home_goals_mu"
+    ],
+    "away": [
+      "elo_diff_scaled",
+      "neutral",
+      "h2h_away_goals_mu"
+    ]
+  },
+  "priors": {
+    "global_home_avg": 1.7673,
+    "global_away_avg": 1.1849,
+    "global_avg": 1.4761
+  },
+  "hyperparams": {
+    "h2h_k": 5.0,
+    "form_window": 5,
+    "form_k": 3.0
+  },
+  "theta_D": 0.26,
+  "rho": -0.049031
+}
