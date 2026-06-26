@@ -1,6 +1,6 @@
 {
   "version": "v5",
-  "train_cutoff": "2026-06-26",
+  "train_cutoff": "2026-06-27",
   "home_advantage": 20.0,
   "features": {
     "home": [
@@ -24,7 +24,7 @@
   ],
   "priors": {
     "global_home_avg": 1.7575,
-    "global_away_avg": 1.1817,
+    "global_away_avg": 1.1818,
     "global_avg": 1.4696
   },
   "hyperparams": {
@@ -34,5 +34,5 @@
   },
   "theta_D": 0.26,
   "theta_D_knockout": 0.28,
-  "rho": -0.049691
+  "rho": -0.049683
 }

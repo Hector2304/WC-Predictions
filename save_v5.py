@@ -35,7 +35,7 @@ from src.features.tournament import add_tournament_features, WC_FEATURES
 from src.features.poisson import PoissonDC
 
 HOME_ADVANTAGE = 20.0
-TRAIN_CUTOFF   = "2026-06-26"
+TRAIN_CUTOFF   = "2026-06-27"
 VAL_START      = "2022-01-01"
 CLASSES        = ["H", "D", "A"]
 H2H_K          = 5.0
