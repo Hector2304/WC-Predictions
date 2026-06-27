@@ -65,6 +65,15 @@ O recrearlo desde cero — hace tres chequeos:
 
 ---
 
+## Comportamiento correcto del checkbox "Neutral venue" en la UI
+
+- **Activado (True)** — todos los partidos WC donde ninguno de los dos equipos es sede (la gran mayoría). Uruguay en Zapopan → activado aunque Uruguay aparezca como Team 1.
+- **Desactivado (False)** — solo cuando el Team 1 realmente juega en su propio país sede. Ejemplos: México en Ciudad de México, EE.UU. en cualquier ciudad de EE.UU., Canadá en Toronto/Vancouver.
+
+No hay doble conteo: el `elo_diff` que entra al Poisson es el diff crudo sin home adjustment. El único mecanismo que cambia la predicción al desactivar la casilla es el coeficiente `neutral` del Poisson. El +20 de Elo se usa solo para calibrar los ratings durante entrenamiento, no se suma al input de predicción.
+
+---
+
 ## Nombres de equipos — convenciones
 
 | En `results.csv` | En `mundial2026.csv` |
