@@ -365,7 +365,51 @@ py compare_window.py           # comparacion ventana temporal full vs 1990+
 
 ---
 
-## 12. Pendientes y próximos pasos
+## 12. Plan fase KO — WC 2026
+
+### Paso 0 — Versionar modelo experimental (ANTES de cualquier cambio)
+Guardar el estado actual (v5 + form + FIFA stats experimental) como versión estable antes de tocar nada. Si los siguientes cambios empeoran el modelo, se puede volver aquí.
+
+### Paso 1 — Fix técnico OBLIGADO: `wc_phases.py`
+**Dato necesario:** fecha del primer partido del R32.
+
+`WC_KNOCKOUT_START` no tiene 2026 → `is_wc_knockout()` retorna 0 para todos los partidos 2026. Al reentrenar con datos KO, esos partidos entrarán como `is_knockout=0`. Hay que agregar:
+```python
+2026: pd.Timestamp("2026-07-XX"),  # fecha real del primer R32
+```
+También actualizar `TRAIN_CUTOFF` en `save_v5.py` después de cada ronda.
+
+### Paso 2 — Análisis R32: ¿threshold propio?
+**Datos necesarios:** fixture R32 (16 emparejamientos) + criterio de clasificación de los 8 mejores terceros.
+
+El modelo tiene `theta_D_knockout=0.28` calibrado sobre R16+QF+SF+Final (1986-2022).
+Draw rates históricos por ronda: R16=19.6%, QF=32.1%, SF=14.3%. R32 probablemente < R16.
+Con el fixture real, calcular Elo diffs para ver si los matchups son tan disparejos como se espera.
+Decisión pendiente: usar el mismo `theta_D_knockout=0.28`, o un `theta_D_R32` más bajo (¿0.26?).
+
+### Paso 3 — Stats FIFA actualizadas
+**Datos necesarios:** archivos FIFA actualizados al cierre de fase de grupos (solo 32 clasificados).
+
+Actualmente 9 indicadores. Con 3 partidos jugados los números son más representativos.
+Ampliar columnas al momento de recibir los archivos — decidir qué agregar en ese momento.
+Reemplazar los archivos en `DATOS FIFA/` y reajustar `src/features/fifa_stats.py`.
+
+### Paso 4 — Stats de jugadores
+El más complejo. Criterios acordados:
+- Solo top ~100 jugadores más influyentes del torneo (no todos)
+- Columnas a definir cuando lleguen los datos (goles, asistencias, minutos, shots en torneo, etc.)
+- Usar como señal de ajuste suave encima del modelo base, no como feature del Poisson
+- Riesgo a tener en cuenta: muestra pequeña (3 partidos) + lesiones/suspensiones en KO
+
+### Orden de implementación
+1. Versionar modelo actual
+2. Recibir fixture R32 → fix `wc_phases.py` + análisis threshold
+3. Recibir stats FIFA actualizadas → ampliar indicadores
+4. Recibir datos de jugadores → definir columnas → integrar como ajuste
+
+---
+
+## 13. Pendientes y próximos pasos (operación inmediata)
 
 ### Datos por agregar (operación inmediata)
 
