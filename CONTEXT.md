@@ -27,9 +27,9 @@ Salida del modelo por partido: **P(H) / P(D) / P(A)** + marcador más probable.
 - `Curaçao` (con cedilla — cuidado al agregar manualmente)
 - `Ivory Coast` (no `Côte d'Ivoire`)
 
-**Estado actual del dataset (24 junio 2026):**
-- 48 partidos del Mundial 2026 con resultado (jornadas 1 y 2, hasta 23 de junio)
-- 24 fixtures sin resultado (jornada 3: 24-27 de junio — no jugados aún)
+**Estado actual del dataset (26 junio 2026):**
+- 64 partidos del Mundial 2026 con resultado (jornadas 1, 2 y 3 parcial — hasta 26 de junio)
+- 8 fixtures sin resultado (2 del 26 de junio + 6 del 27 de junio — no jugados aún)
 - Los partidos eliminatorios (R16 en adelante) no existen aún en el CSV
 
 **Cómo agregar resultados nuevos:**
