@@ -23,8 +23,8 @@
     "is_knockout"
   ],
   "priors": {
-    "global_home_avg": 1.7575,
-    "global_away_avg": 1.1818,
+    "global_home_avg": 1.7574,
+    "global_away_avg": 1.1819,
     "global_avg": 1.4696
   },
   "hyperparams": {
@@ -34,5 +34,5 @@
   },
   "theta_D": 0.26,
   "theta_D_knockout": 0.28,
-  "rho": -0.049683
+  "rho": -0.04983
 }
