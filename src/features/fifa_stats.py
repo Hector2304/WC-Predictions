@@ -7,7 +7,7 @@ tournament average.
 
 Attack pool  (higher → team scores more):
   xG, xG efficiency, possession %, runs behind defense,
-  receptions under pressure, average speed.
+  receptions under pressure.
 
 Defense pool (higher → team concedes less):
   goalkeeper saves, clean sheets, defensive pressures,
@@ -154,10 +154,9 @@ def load_latest_fifa_data(
         prt_df = pd.read_csv(os.path.join(data_dir, "porteria.csv"))
         dfn_df = pd.read_csv(os.path.join(data_dir, "defensa.csv"))
         mov_df = pd.read_csv(os.path.join(data_dir, "movimiento.csv"))
-        fis_df = pd.read_csv(os.path.join(data_dir, "fisico.csv"))
 
         atq_df["eff_parsed"] = atq_df["Efect_goles_prev"].apply(_parse_eff)
-        for df in [atq_df, prt_df, dfn_df, mov_df, fis_df]:
+        for df in [atq_df, prt_df, dfn_df, mov_df]:
             df["team_en"] = df["Equipo"].map(TEAM_NAME_MAP)
 
         avg = {
@@ -170,38 +169,33 @@ def load_latest_fifa_data(
             "recovery": dfn_df["Tiempo_recuperacion_balon_s"].mean(),
             "runs":     mov_df["Desmarques_espalda_defensa"].mean(),
             "recv":     mov_df["Recepciones_bajo_presion"].mean(),
-            "speed":    fis_df["Velocidad_media_kmh"].mean(),
         }
 
         atq = atq_df.dropna(subset=["team_en"]).set_index("team_en")
         prt = prt_df.dropna(subset=["team_en"]).set_index("team_en")
         dfn = dfn_df.dropna(subset=["team_en"]).set_index("team_en")
         mov = mov_df.dropna(subset=["team_en"]).set_index("team_en")
-        fis = fis_df.dropna(subset=["team_en"]).set_index("team_en")
 
         all_teams = (
-            set(atq.index) | set(prt.index) | set(dfn.index)
-            | set(mov.index) | set(fis.index)
+            set(atq.index) | set(prt.index) | set(dfn.index) | set(mov.index)
         )
 
         result: Dict[str, Dict[str, float]] = {}
 
         for team in all_teams:
             # ── Attack pool ────────────────────────────────────────────────
-            xg_v    = _get(atq, team, "Goles_prev")
-            eff_v   = _get(atq, team, "eff_parsed")
-            poss_v  = _get(atq, team, "Posesion_pct")
-            runs_v  = _get(mov, team, "Desmarques_espalda_defensa")
-            recv_v  = _get(mov, team, "Recepciones_bajo_presion")
-            speed_v = _get(fis, team, "Velocidad_media_kmh")
+            xg_v   = _get(atq, team, "Goles_prev")
+            eff_v  = _get(atq, team, "eff_parsed")
+            poss_v = _get(atq, team, "Posesion_pct")
+            runs_v = _get(mov, team, "Desmarques_espalda_defensa")
+            recv_v = _get(mov, team, "Recepciones_bajo_presion")
 
             attack_factor = _geomean([
-                _safe_ratio(xg_v,    avg["xg"])      if xg_v    is not None else 1.0,
-                _safe_ratio(eff_v,   avg["xg_eff"])  if eff_v   is not None else 1.0,
-                _safe_ratio(poss_v,  avg["poss"])    if poss_v  is not None else 1.0,
-                _safe_ratio(runs_v,  avg["runs"])    if runs_v  is not None else 1.0,
-                _safe_ratio(recv_v,  avg["recv"])    if recv_v  is not None else 1.0,
-                _safe_ratio(speed_v, avg["speed"])   if speed_v is not None else 1.0,
+                _safe_ratio(xg_v,   avg["xg"])     if xg_v   is not None else 1.0,
+                _safe_ratio(eff_v,  avg["xg_eff"]) if eff_v  is not None else 1.0,
+                _safe_ratio(poss_v, avg["poss"])   if poss_v is not None else 1.0,
+                _safe_ratio(runs_v, avg["runs"])   if runs_v is not None else 1.0,
+                _safe_ratio(recv_v, avg["recv"])   if recv_v is not None else 1.0,
             ])
 
             # ── Defense pool ───────────────────────────────────────────────
