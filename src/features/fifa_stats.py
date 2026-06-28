@@ -116,10 +116,12 @@ def _parse_eff(s) -> float:
 
 
 def _find_data_dir(base_dir: str) -> str:
-    """Return the latest phase subfolder (J3, KO…) or base_dir if none exist."""
+    """Return the most recently modified phase subfolder, or base_dir if none exist."""
     p = Path(base_dir)
-    subdirs = sorted([d for d in p.iterdir() if d.is_dir()])
-    return str(subdirs[-1]) if subdirs else str(p)
+    subdirs = [d for d in p.iterdir() if d.is_dir()]
+    if not subdirs:
+        return str(p)
+    return str(max(subdirs, key=lambda d: d.stat().st_mtime))
 
 
 def _get(df_idx: pd.DataFrame, team: str, col: str) -> Optional[float]:
