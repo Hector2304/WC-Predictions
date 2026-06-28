@@ -1,0 +1,17 @@
+match_id,date,home,away,city,host_country,neutral
+400021518,2026-06-28,South Africa,Canada,Inglewood,United States,True
+400021516,2026-06-29,Brazil,Japan,Houston,United States,True
+400021513,2026-06-29,Germany,Paraguay,Foxborough,United States,True
+400021522,2026-06-29,Netherlands,Morocco,Monterrey,Mexico,True
+400021514,2026-06-30,Ivory Coast,Norway,Arlington,United States,True
+400021523,2026-06-30,France,Sweden,East Rutherford,United States,True
+400021520,2026-06-30,Mexico,Ecuador,Mexico City,Mexico,False
+400021512,2026-07-01,England,DR Congo,Atlanta,United States,True
+400021525,2026-07-01,Belgium,Senegal,Seattle,United States,True
+400021524,2026-07-01,United States,Bosnia and Herzegovina,Santa Clara,United States,False
+400021519,2026-07-02,Spain,Austria,Inglewood,United States,True
+400021526,2026-07-02,Portugal,Croatia,Toronto,Canada,True
+400021527,2026-07-02,Switzerland,Algeria,Vancouver,Canada,True
+400021515,2026-07-03,Australia,Egypt,Arlington,United States,True
+400021521,2026-07-03,Argentina,Cape Verde,Miami Gardens,United States,True
+400021517,2026-07-03,Colombia,Ghana,Kansas City,United States,True

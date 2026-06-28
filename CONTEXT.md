@@ -380,12 +380,16 @@ Guardar el estado actual (v5 + form + FIFA stats experimental) como versión est
 También actualizar `TRAIN_CUTOFF` en `save_v5.py` después de cada ronda.
 
 ### Paso 2 — Análisis R32: ¿threshold propio?
-**Datos necesarios:** fixture R32 (16 emparejamientos) + criterio de clasificación de los 8 mejores terceros.
+**ANÁLISIS COMPLETADO — DECISIÓN PENDIENTE (2026-06-28)**
 
-El modelo tiene `theta_D_knockout=0.28` calibrado sobre R16+QF+SF+Final (1986-2022).
-Draw rates históricos por ronda: R16=19.6%, QF=32.1%, SF=14.3%. R32 probablemente < R16.
-Con el fixture real, calcular Elo diffs para ver si los matchups son tan disparejos como se espera.
-Decisión pendiente: usar el mismo `theta_D_knockout=0.28`, o un `theta_D_R32` más bajo (¿0.26?).
+Resultados de `analyze_r32_threshold.py` sobre el fixture real:
+- `t=0.26`: predice 9/16 empates — excesivo
+- `t=0.28`: predice 1/16 empates (solo Australia vs Egipto, P(D)=0.284)
+- Histórico R16: ~19.6% → esperaríamos ~3 empates de 16
+- P(D) promedio del R32: 0.239; 10/16 partidos en zona gris (0.25–0.31)
+
+Por ahora se mantiene `theta_D_knockout=0.28`. Revisar tras el R32 real:
+si hay varios empates reales, considerar bajar a ~0.275 para el R16.
 
 ### Paso 3 — Stats FIFA actualizadas
 **Datos necesarios:** archivos FIFA actualizados al cierre de fase de grupos (solo 32 clasificados).

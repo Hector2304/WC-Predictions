@@ -25,6 +25,7 @@ WC_KNOCKOUT_START: dict[int, pd.Timestamp] = {
     2014: pd.Timestamp("2014-06-28"),
     2018: pd.Timestamp("2018-06-30"),
     2022: pd.Timestamp("2022-12-03"),
+    2026: pd.Timestamp("2026-06-28"),
 }
 
 
