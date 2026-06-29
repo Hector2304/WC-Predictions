@@ -1,0 +1,17 @@
+date,home_team,away_team,home_elo,away_elo,elo_diff,h2h_n,v5_P_home,v5_P_draw,v5_P_away,v5_score,v5_pred,exp_P_home,exp_P_draw,exp_P_away,exp_score,exp_pred,actual_home,actual_away,v5_correct,exp_correct
+2026-06-28,South Africa,Canada,1666,1823,-157,0,0.184,0.245,0.571,0-1,Canada,0.146,0.241,0.612,0-1,Canada,0,1,1,1
+2026-06-29,Brazil,Japan,1968,1925,43,3,0.478,0.274,0.248,1-1,Brazil,0.513,0.275,0.212,1-0,Brazil,,,,
+2026-06-29,Germany,Paraguay,1935,1878,57,2,0.45,0.272,0.278,1-1,Germany,0.518,0.258,0.224,1-1,Germany,,,,
+2026-06-29,Netherlands,Morocco,1953,1969,-16,2,0.347,0.28,0.373,1-1,Morocco,0.367,0.27,0.364,1-1,Netherlands,,,,
+2026-06-30,Ivory Coast,Norway,1811,1921,-110,0,0.224,0.261,0.515,1-1,Norway,0.246,0.267,0.486,1-1,Norway,,,,
+2026-06-30,France,Sweden,2064,1757,307,11,0.753,0.169,0.078,2-0,France,0.849,0.108,0.043,3-0,France,,,,
+2026-06-30,Mexico,Ecuador,1966,1924,42,24,0.519,0.276,0.205,1-0,Mexico,0.558,0.29,0.151,1-0,D,,,,
+2026-07-01,England,DR Congo,2004,1769,235,0,0.66,0.212,0.128,2-0,England,0.685,0.205,0.109,2-0,England,,,,
+2026-07-01,Belgium,Senegal,1868,1837,31,0,0.421,0.278,0.301,1-1,Belgium,0.456,0.268,0.276,1-1,Belgium,,,,
+2026-07-01,United States,Bosnia and Herzegovina,1860,1682,178,2,0.659,0.228,0.113,1-0,United States,0.733,0.183,0.084,2-0,United States,,,,
+2026-07-02,Spain,Austria,2094,1823,271,8,0.778,0.145,0.076,2-0,Spain,0.852,0.109,0.039,2-0,Spain,,,,
+2026-07-02,Portugal,Croatia,1954,1913,41,5,0.447,0.275,0.278,1-1,Portugal,0.51,0.269,0.221,1-1,Portugal,,,,
+2026-07-02,Switzerland,Algeria,1896,1836,60,1,0.47,0.274,0.256,1-1,Switzerland,0.541,0.247,0.212,1-1,Switzerland,,,,
+2026-07-03,Australia,Egypt,1863,1806,57,1,0.442,0.284,0.275,1-1,D,0.413,0.308,0.279,1-1,D,,,,
+2026-07-03,Argentina,Cape Verde,2072,1680,392,0,0.816,0.131,0.053,2-0,Argentina,0.831,0.128,0.042,2-0,Argentina,,,,
+2026-07-03,Colombia,Ghana,1961,1659,302,0,0.733,0.178,0.09,2-0,Colombia,0.721,0.197,0.082,2-0,Colombia,,,,

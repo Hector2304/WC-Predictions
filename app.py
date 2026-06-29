@@ -404,9 +404,9 @@ def _outcome_card(prediction: str, home_team: str, away_team: str,
     if prediction == "Draw":
         st.markdown(
             f"<div style='background:#fff8e1;border-left:5px solid #f0a500;"
-            f"padding:14px 18px;border-radius:6px;margin:4px 0'>"
+            f"padding:14px 18px;border-radius:6px;margin:4px 0;color:#1a1a1a'>"
             f"<span style='font-size:1.3em'> <strong>Draw</strong></span><br>"
-            f"<span style='color:#666;font-size:0.9em'>"
+            f"<span style='color:#555;font-size:0.9em'>"
             f"P(Draw) = {p_d:.1%} — above threshold {theta_D:.2f}</span></div>",
             unsafe_allow_html=True,
         )
@@ -414,10 +414,10 @@ def _outcome_card(prediction: str, home_team: str, away_team: str,
         winner_prob = p_h if prediction == home_team else p_a
         st.markdown(
             f"<div style='background:#e8f5e9;border-left:5px solid #2ecc71;"
-            f"padding:14px 18px;border-radius:6px;margin:4px 0'>"
+            f"padding:14px 18px;border-radius:6px;margin:4px 0;color:#1a1a1a'>"
             f"<span style='font-size:1.3em'>{flag(prediction)} "
             f"<strong>{prediction} wins</strong></span><br>"
-            f"<span style='color:#666;font-size:0.9em'>"
+            f"<span style='color:#555;font-size:0.9em'>"
             f"{winner_prob:.1%} win probability</span></div>",
             unsafe_allow_html=True,
         )
